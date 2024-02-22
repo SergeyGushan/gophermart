@@ -44,7 +44,7 @@ func (a *App) startHTTPServer() {
 	}
 }
 
-func (a *App) newHttpClient() *client.Client {
+func (a *App) newHTTPClient() *client.Client {
 	c := client.Client{}
 	return &c
 }

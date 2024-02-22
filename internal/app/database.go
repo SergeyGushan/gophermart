@@ -5,7 +5,7 @@ import (
 	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
-func (a *App) newPgSqlConnect(address string) (*sql.DB, error) {
+func (a *App) newPgSQLConnect(address string) (*sql.DB, error) {
 
 	db, err := sql.Open("pgx", address)
 	if err != nil {

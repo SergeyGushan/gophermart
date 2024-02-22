@@ -40,7 +40,7 @@ func (t *Transactor) InTransaction(ctx context.Context, txFunc func(ctx context.
 	}
 
 	if _, ok := t.wraps[ctx]; !ok {
-		t.wraps[ctx] = make([]func(ctx context.Context) error, 0, 0)
+		t.wraps[ctx] = make([]func(ctx context.Context) error, 0)
 	}
 
 	t.wraps[ctx] = append(t.wraps[ctx], txFunc)

@@ -26,8 +26,6 @@ type App struct {
 	logger Logger
 }
 
-var a *App
-
 func NewApp() (*App, error) {
 	cfg, err := config.NewConfig()
 	if err != nil {
@@ -41,13 +39,13 @@ func NewApp() (*App, error) {
 
 	app.initLogger()
 
-	pgSqlConn, err := app.newPgSqlConnect(cfg.DatabaseURI)
+	pgSQLConn, err := app.newPgSQLConnect(cfg.DatabaseURI)
 	if err != nil {
 		return nil, err
 	}
 
-	app.pgsql = pgSqlConn
-	httpClient := app.newHttpClient()
+	app.pgsql = pgSQLConn
+	httpClient := app.newHTTPClient()
 	app.http = httpClient
 	app.c = NewContainer(app.pgsql, app.http, cfg.AccrualSystemAddress)
 
@@ -57,19 +55,19 @@ func NewApp() (*App, error) {
 }
 
 func migration(client *sql.DB) {
-	_, err := client.Exec(migrations.CreateUsersTableSql())
+	_, err := client.Exec(migrations.CreateUsersTableSQL())
 
 	if err != nil {
 		panic(err)
 	}
 
-	_, err = client.Exec(migrations.CreateOrdersTableSql())
+	_, err = client.Exec(migrations.CreateOrdersTableSQL())
 
 	if err != nil {
 		panic(err)
 	}
 
-	_, err = client.Exec(migrations.CreateOperationsTableSql())
+	_, err = client.Exec(migrations.CreateOperationsTableSQL())
 
 	if err != nil {
 		panic(err)

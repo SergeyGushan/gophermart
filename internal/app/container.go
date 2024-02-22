@@ -25,10 +25,10 @@ type Container struct {
 	deps map[string]interface{}
 }
 
-func NewContainer(pgSqlConn *sql.DB, httpClient *http.Client, baseURL string) *Container {
+func NewContainer(pgSQLConn *sql.DB, httpClient *http.Client, baseURL string) *Container {
 
 	return &Container{
-		pgsql:   pgSqlConn,
+		pgsql:   pgSQLConn,
 		http:    httpClient,
 		baseURL: baseURL,
 
@@ -45,7 +45,7 @@ func (c *Container) getPgsqlx() *sql.DB {
 	return c.pgsql
 }
 
-func (c *Container) getHttp() *http.Client {
+func (c *Container) getHTTP() *http.Client {
 	return c.http
 }
 
@@ -86,5 +86,5 @@ func (c *Container) getOperationRepo() *operationrepo.Repository {
 
 func (c *Container) getAccrualRepo() *accrualrepo.Repository {
 
-	return accrualrepo.NewRepository(c.getHttp(), c.baseURL)
+	return accrualrepo.NewRepository(c.getHTTP(), c.baseURL)
 }

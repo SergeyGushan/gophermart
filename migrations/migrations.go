@@ -1,6 +1,6 @@
 package migrations
 
-func CreateUsersTableSql() string {
+func CreateUsersTableSQL() string {
 	return `CREATE TABLE IF NOT EXISTS users (
 		id SERIAL PRIMARY KEY, 
 		login VARCHAR(255) UNIQUE NOT NULL, 
@@ -9,7 +9,7 @@ func CreateUsersTableSql() string {
  	);`
 }
 
-func CreateOrdersTableSql() string {
+func CreateOrdersTableSQL() string {
 	return `CREATE TABLE IF NOT EXISTS orders (
 		id SERIAL PRIMARY KEY, order_id VARCHAR(255) UNIQUE NOT NULL, 
 		user_id INTEGER REFERENCES users(id) NOT NULL, 
@@ -19,7 +19,7 @@ func CreateOrdersTableSql() string {
 	);`
 }
 
-func CreateOperationsTableSql() string {
+func CreateOperationsTableSQL() string {
 	return `CREATE TABLE IF NOT EXISTS operations (
 		id SERIAL PRIMARY KEY, order_id VARCHAR(255)  NOT NULL, 
 		user_id INTEGER REFERENCES users(id) NOT NULL, 
