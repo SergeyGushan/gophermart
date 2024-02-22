@@ -1,4 +1,4 @@
-package pgsqlrepo
+package transactor
 
 import (
 	"context"

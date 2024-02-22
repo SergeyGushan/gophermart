@@ -2,16 +2,16 @@ package orderrepo
 
 import (
 	"database/sql"
-	"gophermart/internal/adapter/pgsqlrepo"
+	"gophermart/internal/adapter/pgsqlrepo/transactor"
 )
 
 type Repository struct {
-	pgsqlrepo.Transactor
+	transactor.Transactor
 }
 
 func NewRepository(conn *sql.DB) *Repository {
 	return &Repository{
 
-		pgsqlrepo.NewTransactor(conn),
+		transactor.NewTransactor(conn),
 	}
 }

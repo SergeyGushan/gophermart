@@ -1,8 +1,8 @@
 package api
 
 import (
+	"errors"
 	"gophermart/internal/entity"
-	"gophermart/internal/service"
 	"net/http"
 )
 
@@ -13,48 +13,23 @@ type RequestBalanceWithdraw struct {
 
 func (h Handler) BalanceWithdraw(w http.ResponseWriter, r *http.Request) {
 	var requestData RequestBalanceWithdraw
+	var HTTPException *entity.HTTPException
 
 	if err := getDataFromRequest(r, &requestData); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
-	if isValid := service.IsValidLuhn(requestData.Order); !isValid {
-		w.WriteHeader(http.StatusUnprocessableEntity)
-		return
-	}
-
 	ctx := r.Context()
-
-	userID, errContext := getUserIDFromContext(ctx)
-
-	if errContext != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
-	balance, errGetBalanceByUserID := h.uc.GetBalanceByUserID(ctx, userID)
-
-	if errGetBalanceByUserID != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	if balance.Current < requestData.Sum {
-		w.WriteHeader(http.StatusPaymentRequired)
-		return
-	}
-
-	_, errCreateOperation := h.uc.CreateOperation(
-		ctx,
-		requestData.Order,
-		userID,
-		entity.OperationTypeWithdrawn,
-		requestData.Sum,
-	)
+	_, errCreateOperation := h.uc.CreateWithdrawnOperation(ctx, requestData.Order, requestData.Sum)
 
 	if errCreateOperation != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		if errors.As(errCreateOperation, &HTTPException) {
+			w.WriteHeader(HTTPException.Code)
+		} else {
+			w.WriteHeader(http.StatusBadRequest)
+		}
+
 		return
 	}
 

@@ -8,7 +8,7 @@ import (
 func (h Handler) Withdrawals(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	userID, errContext := getUserIDFromContext(ctx)
+	userID, errContext := GetUserIDFromContext(ctx)
 
 	if errContext != nil {
 		w.WriteHeader(http.StatusUnauthorized)

@@ -24,7 +24,7 @@ func getDataFromRequest(req *http.Request, requestData interface{}) error {
 	return nil
 }
 
-func getUserIDFromContext(ctx context.Context) (int64, error) {
+func GetUserIDFromContext(ctx context.Context) (int64, error) {
 	value := ctx.Value(middleware.UserIDKey)
 
 	if value != nil {

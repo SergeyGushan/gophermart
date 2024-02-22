@@ -2,23 +2,24 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+	"gophermart/internal/entity"
 	"net/http"
 )
 
 func (h Handler) Balance(w http.ResponseWriter, r *http.Request) {
+	var HTTPException *entity.HTTPException
+
 	ctx := r.Context()
-
-	userID, errContext := getUserIDFromContext(ctx)
-
-	if errContext != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		return
-	}
-
-	balance, errGetBalanceByUserID := h.uc.GetBalanceByUserID(ctx, userID)
+	balance, errGetBalanceByUserID := h.uc.GetBalanceByUserID(ctx)
 
 	if errGetBalanceByUserID != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		if errors.As(errGetBalanceByUserID, &HTTPException) {
+			w.WriteHeader(HTTPException.Code)
+		} else {
+			w.WriteHeader(http.StatusBadRequest)
+		}
+
 		return
 	}
 
