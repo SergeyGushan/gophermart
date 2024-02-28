@@ -7,6 +7,7 @@ import (
 	"gophermart/internal/handler/http"
 	"gophermart/internal/handler/http/api"
 	client "net/http"
+	"time"
 )
 
 func (a *App) StartHTTPServer() error {
@@ -45,6 +46,8 @@ func (a *App) startHTTPServer() {
 }
 
 func (a *App) newHTTPClient() *client.Client {
-	c := client.Client{}
+	c := client.Client{
+		Timeout: 30 * time.Second,
+	}
 	return &c
 }

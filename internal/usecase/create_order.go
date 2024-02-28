@@ -12,6 +12,10 @@ import (
 func (u *UseCase) CreateOrder(ctx context.Context, orderID string) (int64, error) {
 	var duplicateError *entity.DuplicateError
 
+	if err := u.limiter.Wait(ctx); err != nil {
+		return 0, entity.NewHTTPException(http.StatusInternalServerError, "")
+	}
+
 	if isValid := luhn.IsValidLuhn(orderID); !isValid {
 		return 0, entity.NewHTTPException(http.StatusUnprocessableEntity, "")
 	}
