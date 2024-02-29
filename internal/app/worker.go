@@ -6,10 +6,9 @@ func (a *App) RunWorker() error {
 	ticker := time.NewTicker(time.Second)
 	defer ticker.Stop()
 
-	for {
-		select {
-		case <-ticker.C:
-			a.worker.Accrual()
-		}
+	for range ticker.C {
+		a.worker.Accrual()
 	}
+
+	return nil
 }
