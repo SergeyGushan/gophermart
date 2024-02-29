@@ -15,7 +15,6 @@ type UseCase interface {
 	GetOperationsByTypeWithdrawByUserID(ctx context.Context, userID int64) ([]entity.Operation, error)
 	CreateWithdrawnOperation(ctx context.Context, orderID string, sum float64) (int64, error)
 	GetBalanceByUserID(ctx context.Context) (entity.BalanceResponse, error)
-	Accrual(ctx context.Context, orderID string, userID int64)
 }
 
 type Handler struct {

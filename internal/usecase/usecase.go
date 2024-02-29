@@ -24,22 +24,16 @@ type operationService interface {
 	GetOperationsByTypeWithdrawByUserID(ctx context.Context, userID int64) ([]entity.Operation, error)
 }
 
-type accrualService interface {
-	GetOrderAccrual(orderID string) (entity.Accrual, error)
-}
-
 type UseCase struct {
 	userService      userService
 	orderService     orderService
 	operationService operationService
-	accrualService   accrualService
 }
 
-func NewUseCase(userService userService, orderService orderService, operationService operationService, accrualService accrualService) *UseCase {
+func NewUseCase(userService userService, orderService orderService, operationService operationService) *UseCase {
 	return &UseCase{
 		userService:      userService,
 		orderService:     orderService,
 		operationService: operationService,
-		accrualService:   accrualService,
 	}
 }

@@ -46,7 +46,5 @@ func (u *UseCase) CreateOrder(ctx context.Context, orderID string) (int64, error
 		return 0, createOrderError
 	}
 
-	go u.Accrual(ctx, orderID, userID)
-
 	return createdOrderID, nil
 }

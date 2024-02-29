@@ -2,9 +2,7 @@ package app
 
 import (
 	"database/sql"
-	"gophermart/internal/adapter/httprepo/accrualrepo"
 	"gophermart/migrations"
-	"gophermart/worker"
 	"net/http"
 	"sync"
 
@@ -26,7 +24,6 @@ type App struct {
 	pgsql  *sql.DB
 	http   *http.Client
 	logger Logger
-	worker *worker.Worker
 }
 
 func NewApp() (*App, error) {
@@ -49,11 +46,8 @@ func NewApp() (*App, error) {
 	}
 
 	app.pgsql = pgSQLConn
-	httpClient := app.newHTTPClient()
-	repo := accrualrepo.NewRepository(httpClient, cfg.AccrualSystemAddress)
-	app.http = httpClient
-	app.c = NewContainer(app.pgsql, app.http, cfg.AccrualSystemAddress)
-	app.worker = worker.NewWorker(pgSQLConn, repo)
+	app.http = app.newHTTPClient()
+	app.c = NewContainer(app.pgsql)
 	migration(app.pgsql)
 
 	return app, nil

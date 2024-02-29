@@ -1,6 +1,10 @@
 package app
 
-import "time"
+import (
+	"gophermart/internal/adapter/httprepo/accrualrepo"
+	"gophermart/worker"
+	"time"
+)
 
 func (a *App) RunWorker() error {
 	go func() {
@@ -8,7 +12,7 @@ func (a *App) RunWorker() error {
 		defer ticker.Stop()
 
 		for range ticker.C {
-			a.worker.Accrual()
+			worker.Accrual(a.pgsql, accrualrepo.NewRepository(a.newHTTPClient(), a.cfg.AccrualSystemAddress))
 		}
 	}()
 	return nil

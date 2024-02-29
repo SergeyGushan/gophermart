@@ -2,13 +2,14 @@ package worker
 
 import (
 	"database/sql"
+	"gophermart/internal/adapter/httprepo/accrualrepo"
 	"gophermart/internal/entity"
 	"log"
 	"net/http"
 )
 
-func (w Worker) Accrual() {
-	rows, err := w.pgSQL.Query(
+func Accrual(pgSQL *sql.DB, repo *accrualrepo.Repository) {
+	rows, err := pgSQL.Query(
 		"SELECT * FROM orders WHERE status = $1 OR status = $2 LIMIT 5",
 		entity.OrderStatusNew, entity.OrderStatusError,
 	)
@@ -38,7 +39,7 @@ func (w Worker) Accrual() {
 			continue
 		}
 
-		_, err = w.pgSQL.Exec(
+		_, err = pgSQL.Exec(
 			"UPDATE orders SET status = $1 WHERE order_id = $2",
 			entity.OrderStatusProcessing,
 			order.OrderID,
@@ -49,11 +50,11 @@ func (w Worker) Accrual() {
 			continue
 		}
 
-		accrual, errAccrual := w.repo.GetOrderAccrual(order.OrderID)
+		accrual, errAccrual := repo.GetOrderAccrual(order.OrderID)
 
 		if errAccrual != nil {
 			log.Println("Error getting order accrual:", errAccrual)
-			_, _ = w.pgSQL.Exec(
+			_, _ = pgSQL.Exec(
 				"UPDATE orders SET status = $1 WHERE order_id = $2",
 				entity.OrderStatusError,
 				order.OrderID,
@@ -64,7 +65,7 @@ func (w Worker) Accrual() {
 		if accrual.Code == http.StatusOK {
 			switch accrual.Item.Status {
 			case "INVALID":
-				_, err := w.pgSQL.Exec(
+				_, err := pgSQL.Exec(
 					"UPDATE orders SET status = $1 WHERE order_id = $2",
 					entity.OrderStatusInvalid,
 					order.OrderID,
@@ -74,7 +75,7 @@ func (w Worker) Accrual() {
 					continue
 				}
 			case "PROCESSED":
-				_, err := w.pgSQL.Exec(
+				_, err := pgSQL.Exec(
 					"UPDATE orders SET status = $1, accrual = $2 WHERE order_id = $3",
 					entity.OrderStatusProcessed,
 					accrual.Item.Accrual,
@@ -86,7 +87,7 @@ func (w Worker) Accrual() {
 					continue
 				}
 
-				_, err = w.pgSQL.Exec(
+				_, err = pgSQL.Exec(
 					"INSERT INTO operations (order_id, user_id, type, sum) VALUES ($1, $2, $3, $4)",
 					order.OrderID,
 					order.UserID,
