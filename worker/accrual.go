@@ -15,19 +15,19 @@ func Accrual(pgSQL *sql.DB, repo *accrualrepo.Repository) {
 	)
 
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		return
 	}
 
 	defer func(rows *sql.Rows) {
 		err := rows.Close()
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 	}(rows)
 
 	if rows.Err() != nil {
-		log.Fatal(rows.Err())
+		log.Println(rows.Err())
 		return
 	}
 
