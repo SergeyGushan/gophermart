@@ -9,7 +9,7 @@ import (
 
 func (w Worker) Accrual() {
 	rows, err := w.pgSQL.Query(
-		"SELECT * FROM orders WHERE status = $1 OR status = $2 LIMIT 1",
+		"SELECT * FROM orders WHERE status = $1 OR status = $2 LIMIT 5",
 		entity.OrderStatusNew, entity.OrderStatusError,
 	)
 
@@ -35,6 +35,17 @@ func (w Worker) Accrual() {
 
 		err := rows.Scan(&order.ID, &order.OrderID, &order.UserID, &order.Status, &order.Accrual, &order.CreatedAt)
 		if err != nil {
+			continue
+		}
+
+		_, err = w.pgSQL.Exec(
+			"UPDATE orders SET status = $1 WHERE order_id = $2",
+			entity.OrderStatusProcessing,
+			order.OrderID,
+		)
+
+		if err != nil {
+			log.Println("Error updating order status to Processing:", err)
 			continue
 		}
 
