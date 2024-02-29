@@ -3,7 +3,7 @@ package app
 import "time"
 
 func (a *App) RunWorker() error {
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(time.Second)
 	defer ticker.Stop()
 
 	for {

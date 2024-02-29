@@ -9,7 +9,7 @@ import (
 
 func (w Worker) Accrual() {
 	rows, err := w.pgSQL.Query(
-		"SELECT * FROM orders WHERE status = $1 OR status = $2",
+		"SELECT * FROM orders WHERE status = $1 OR status = $2 LIMIT 1",
 		entity.OrderStatusNew, entity.OrderStatusError,
 	)
 
