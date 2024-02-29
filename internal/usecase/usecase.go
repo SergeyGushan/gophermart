@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"golang.org/x/time/rate"
 	"gophermart/internal/entity"
 )
 
@@ -34,7 +33,6 @@ type UseCase struct {
 	orderService     orderService
 	operationService operationService
 	accrualService   accrualService
-	limiter          *rate.Limiter
 }
 
 func NewUseCase(userService userService, orderService orderService, operationService operationService, accrualService accrualService) *UseCase {
@@ -43,6 +41,5 @@ func NewUseCase(userService userService, orderService orderService, operationSer
 		orderService:     orderService,
 		operationService: operationService,
 		accrualService:   accrualService,
-		limiter:          rate.NewLimiter(rate.Limit(10), 1),
 	}
 }
